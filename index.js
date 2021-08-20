@@ -12,21 +12,31 @@ var app = express()
 
 async function startApolloServer(typeDefs, resolvers) {
     const app = express();
-    const MONGO_DB = process.env.MDB_HOST
-    const client = await MongoClient.connect(
-        MONGO_DB,
-        { useNewUrlParser: true }
-    )
-    const db = client.db()
+    // const MONGO_DB = process.env.MDB_HOST
+    // const client = await MongoClient.connect(
+    //     MONGO_DB,
+    //     { useNewUrlParser: true }
+    // )
+    // const db = client.db()
+    // const redshiftClient = require('./redshift.js')
+    // // using promises
+    // redshiftClient.query('SELECT * FROM edw.dim_rating_variations', {raw: true})
+    // .then(function(data){
+    // console.log(data);
+
+    // // if you want to close client pool, uncomment redshift.close() line
+    // // but you won't be able to make subsequent calls because connection is terminated
+    // // redshift.close();
+    // }, function(err){
+    // throw err;
+    // });
+
+    const db = require('./redshift.js')
     const context = { db }
     const server = new ApolloServer({
         typeDefs,
         resolvers,
-        context: async ({ req }) => {
-            const githubToken = req.headers.authorization
-            const currentUser = await db.collection('users').findOne({ githubToken })
-            return { db, currentUser }
-        }
+        context
     })
     await server.start();
     server.applyMiddleware({ app });

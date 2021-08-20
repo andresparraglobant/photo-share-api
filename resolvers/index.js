@@ -12,8 +12,12 @@ module.exports = {
                 .find()
                 .toArray(),
         totalUsers: (parent, args, { db }) =>
-            db.collection('users')
-                .estimatedDocumentCount(),
+            db.query('SELECT COUNT(*) FROM users', {raw: true})
+                .then(function(data){
+                    data;
+                }, function(err){
+                    throw err;
+                }),
         allUsers: (parent, args, { db }) =>
             db.collection('users')
                 .find()
@@ -48,8 +52,8 @@ module.exports = {
                 login,
                 name
               } = await authorizeWithGithub({
-                client_id: '9fbd1d0f0fec87cd023d',
-                client_secret: '67531d9b605879603f77908db1ef2ff6defb72b7',
+                client_id: '?',
+                client_secret: '?',
                 code
               })
             // 2. If there is a message, something went wrong
